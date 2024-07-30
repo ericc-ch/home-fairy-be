@@ -25,7 +25,7 @@ const processStt = async (blob: Blob) => {
 
   console.log("Converting text to audio...");
   const ttsRequest = await generateTTS({
-    body: { text: sttResponse.text },
+    body: { text: sttResponse.text, voice: "en-US-AriaNeural" },
   });
 
   const ttsStatus = await waitForTTS({ taskId: ttsRequest.taskId });
