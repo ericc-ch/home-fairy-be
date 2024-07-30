@@ -12,4 +12,8 @@
 *.pyc
 *.swp
 
+# Screenshot util generated executables
+screenshots/
+screenshot.exe
+
 # End of https://www.toptal.com/developers/gitignore/api/deno

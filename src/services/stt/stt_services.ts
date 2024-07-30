@@ -1,4 +1,4 @@
-import { basicAuth } from "@/utils/auth.ts";
+import { basicAuth } from "../../lib/auth.ts";
 import { ofetch } from "ofetch";
 import { Transcript } from "./stt_types.ts";
 
