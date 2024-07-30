@@ -1,4 +1,8 @@
 {
   "deno.enablePaths": ["./"],
-  "deno.enable": true
+  "deno.enable": true,
+  "cSpell.words": [
+    "Hono",
+    "ofetch"
+  ]
 }
