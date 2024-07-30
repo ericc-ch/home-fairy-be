@@ -1,5 +1,5 @@
-import { join } from "@std/path";
 import { screenshotPath } from "@/lib/directories.ts";
+import { join } from "@std/path";
 
 function screenshotWin() {
   const exePath = join(import.meta.dirname!, "screenshot.bat");
@@ -11,18 +11,29 @@ function screenshotWin() {
   return command.output();
 }
 
+function screenshotLinux() {
+  const command = new Deno.Command("flameshot", {
+    args: ["screen", "-p", screenshotPath],
+  });
+
+  return command.output();
+}
+
+const screenshotFns = new Map<
+  typeof Deno.build.os,
+  () => Promise<Deno.CommandOutput>
+>([
+  ["linux", screenshotLinux],
+  ["windows", screenshotWin],
+]);
+
 export function screenshot() {
-  if (Deno.build.os === "windows") {
-    return screenshotWin();
-  } else {
-    throw new Error("Unsupported OS");
-  }
+  const screenshotFn = screenshotFns.get(Deno.build.os);
+  if (!screenshotFn) throw new Error("Unsupported OS");
+
+  return screenshotFn();
 }
 
 export function getScreenshot() {
   return Deno.readFile(screenshotPath);
 }
-
-setTimeout(async () => {
-  await screenshot();
-}, 10000);

@@ -2,7 +2,12 @@
   "deno.enablePaths": ["./"],
   "deno.enable": true,
   "cSpell.words": [
+    "Belobog",
+    "Eridu's",
+    "Ethereals",
+    "explorable",
     "Hono",
-    "ofetch"
+    "ofetch",
+    "Yoverse"
   ]
 }

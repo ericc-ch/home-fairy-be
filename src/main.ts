@@ -4,6 +4,7 @@ import { Hono } from "@hono/hono";
 import { upgradeWebSocket } from "@hono/hono/deno";
 import { logger } from "@hono/hono/logger";
 import { WSContext } from "@hono/hono/ws";
+import {} from "@google/generative-ai";
 
 const app = new Hono();
 
@@ -17,7 +18,7 @@ const megabytes = (size: number) => size * 1024 * 1024;
 
 let websocket: WSContext | undefined;
 
-const processStt = async (blob: Blob) => {
+const processCommand = async (blob: Blob) => {
   if (!websocket) return console.log("Websocket not connected");
 
   console.log("Converting audio to text...");
@@ -42,7 +43,7 @@ app.post("/command", async (c) => {
   if (file.size > megabytes(100))
     return c.json({ message: "Audio file is too large" }, 400);
 
-  processStt(file).catch((err) => {
+  processCommand(file).catch((err) => {
     console.error("Error processing STT request:", err);
     if (websocket) websocket.send(JSON.stringify(err));
   });
