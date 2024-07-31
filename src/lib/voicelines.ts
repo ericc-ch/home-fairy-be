@@ -8,9 +8,11 @@ export function getRandomVoicelinesUrl() {
     return undefined;
   }
 
-  const randomIndex = Math.round(Math.random() * length);
+  const randomIndex = Math.round(Math.random() * (length - 1));
 
   const randomVoiceline = voicelines[randomIndex];
+
+  console.log({ randomIndex, randomVoiceline });
 
   return `/voicelines/${randomVoiceline.name}`;
 }

@@ -11,14 +11,14 @@ export const commandRoutes = new Hono();
 
 interface ProcessCommandOptions {
   audio: Blob;
-  sendScreenshot?: boolean;
+  takeScreenshot?: boolean;
 }
 
 const TIME_LABEL = "processCommand";
 
 async function processCommand({
   audio,
-  sendScreenshot = false,
+  takeScreenshot = false,
 }: ProcessCommandOptions) {
   console.log("Processing command...");
   console.time(TIME_LABEL);
@@ -30,7 +30,7 @@ async function processCommand({
   console.timeLog(TIME_LABEL, "Audio uploaded");
 
   let uploadedScreenshot: Awaited<ReturnType<typeof uploadImage>> | undefined;
-  if (sendScreenshot) {
+  if (takeScreenshot) {
     console.log("Taking screenshot...");
     const screenshotPath = await screenshotManager.screenshot();
     console.timeLog(TIME_LABEL, "Screenshot taken");
@@ -66,7 +66,12 @@ async function processCommand({
   const ttsStatus = await waitForTTS({ taskId: ttsRequest.taskId });
   console.timeLog(TIME_LABEL, "Text converted to audio");
 
-  websocketManager.instance.send(JSON.stringify(ttsStatus));
+  websocketManager.instance.send(
+    JSON.stringify({
+      ...ttsStatus,
+      output: new URL(ttsStatus.url!).pathname,
+    })
+  );
   console.log("Command processed!");
   console.timeEnd(TIME_LABEL);
 }
@@ -86,19 +91,24 @@ commandRoutes.post("/command", async (c) => {
   if (audio.size > megabytes(100))
     return c.json({ message: "Audio file is too large" }, 400);
 
-  const sendScreenshot = body["sendScreenshot"] === "true";
+  const takeScreenshot = body["takeScreenshot"] === "true";
 
   processCommand({
     audio,
-    sendScreenshot,
+    takeScreenshot,
   }).catch((err) => {
     console.error("Error processing command:", err);
     if (websocketManager.instance)
       websocketManager.instance.send(JSON.stringify(err));
   });
 
-  return c.json(
-    { message: "Command received", voicelines: getRandomVoicelinesUrl() },
-    200
+  const voiceline = getRandomVoicelinesUrl();
+
+  websocketManager.instance.send(
+    JSON.stringify({
+      message: "Command received",
+      voiceline,
+    })
   );
+  return c.json({ message: "Command received", voiceline }, 200);
 });

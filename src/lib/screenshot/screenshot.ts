@@ -1,6 +1,6 @@
-import { join } from "@std/path";
-import { emptyDirSync } from "@std/fs";
 import { screenshotDir } from "@/lib/directories.ts";
+import { emptyDirSync } from "@std/fs";
+import { join } from "@std/path";
 
 function screenshotWin(path: string) {
   // Script taken from https://github.com/npocmaka/batch.scripts/blob/master/hybrids/.net/c/screenCapture.bat
@@ -23,14 +23,10 @@ function screenshotLinux(path: string) {
 
 class ScreenshotManager {
   private count = 0;
-  static screenshotDir = screenshotDir;
   private static instance = new ScreenshotManager();
 
   private get screenshotPath() {
-    return join(
-      ScreenshotManager.screenshotDir,
-      `screenshot-${this.count}.png`
-    );
+    return join(screenshotDir, `screenshot-${this.count}.png`);
   }
 
   private osMap = new Map<
@@ -43,7 +39,7 @@ class ScreenshotManager {
 
   private constructor() {
     console.log("Resetting screenshots...");
-    emptyDirSync(ScreenshotManager.screenshotDir);
+    emptyDirSync(screenshotDir);
   }
 
   static getInstance() {
