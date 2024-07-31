@@ -6,6 +6,7 @@ function resetScreenshotDir() {
 }
 
 function screenshotWin(path: string) {
+  // Script taken from https://github.com/npocmaka/batch.scripts/blob/master/hybrids/.net/c/screenCapture.bat
   const exePath = join(import.meta.dirname!, "screenshot.bat");
 
   const command = new Deno.Command(exePath, {
