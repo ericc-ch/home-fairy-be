@@ -1,9 +1,10 @@
+import { TTS_API_KEY, TTS_BASE_URL } from "@/lib/env.ts";
 import { ofetch } from "ofetch";
 
 const tts = ofetch.create({
-  baseURL: Deno.env.get("TTS_BASE_URL"),
+  baseURL: TTS_BASE_URL,
   headers: {
-    "X-API-Key": Deno.env.get("TTS_API_KEY")!,
+    "X-API-Key": TTS_API_KEY,
   },
 });
 

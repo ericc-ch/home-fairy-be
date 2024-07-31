@@ -1,14 +1,12 @@
 import { basicAuth } from "../../lib/auth.ts";
 import { ofetch } from "ofetch";
 import { Transcript } from "./stt_types.ts";
+import { STT_BASE_URL, STT_PASSWORD, STT_USERNAME } from "@/lib/env.ts";
 
 const stt = ofetch.create({
-  baseURL: Deno.env.get("STT_BASE_URL"),
+  baseURL: STT_BASE_URL,
   headers: {
-    Authorization: `Basic ${basicAuth(
-      Deno.env.get("STT_USERNAME")!,
-      Deno.env.get("STT_PASSWORD")!
-    )}`,
+    Authorization: `Basic ${basicAuth(STT_USERNAME, STT_PASSWORD)}`,
   },
 });
 

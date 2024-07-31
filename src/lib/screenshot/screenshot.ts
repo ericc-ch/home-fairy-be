@@ -1,39 +1,74 @@
-import { screenshotPath } from "@/lib/directories.ts";
 import { join } from "@std/path";
+import { emptyDirSync } from "@std/fs";
 
-function screenshotWin() {
+function resetScreenshotDir() {
+  return emptyDirSync(ScreenshotManager.screenshotDir);
+}
+
+function screenshotWin(path: string) {
   const exePath = join(import.meta.dirname!, "screenshot.bat");
 
   const command = new Deno.Command(exePath, {
-    args: [screenshotPath],
+    args: [path],
   });
 
   return command.output();
 }
 
-function screenshotLinux() {
+function screenshotLinux(path: string) {
   const command = new Deno.Command("flameshot", {
-    args: ["screen", "-p", screenshotPath],
+    args: ["screen", "-p", path],
   });
 
   return command.output();
 }
 
-const screenshotFns = new Map<
-  typeof Deno.build.os,
-  () => Promise<Deno.CommandOutput>
->([
-  ["linux", screenshotLinux],
-  ["windows", screenshotWin],
-]);
+class ScreenshotManager {
+  private count = 0;
+  static screenshotDir = join(Deno.cwd(), "screenshots");
+  private static instance = new ScreenshotManager();
 
-export function screenshot() {
-  const screenshotFn = screenshotFns.get(Deno.build.os);
-  if (!screenshotFn) throw new Error("Unsupported OS");
+  private get screenshotPath() {
+    return join(
+      ScreenshotManager.screenshotDir,
+      `screenshot-${this.count}.png`
+    );
+  }
 
-  return screenshotFn();
+  private osMap = new Map<
+    typeof Deno.build.os,
+    (path: string) => Promise<Deno.CommandOutput>
+  >([
+    ["linux", screenshotLinux],
+    ["windows", screenshotWin],
+  ]);
+
+  private constructor() {
+    resetScreenshotDir();
+  }
+
+  static getInstance() {
+    if (!ScreenshotManager.instance)
+      ScreenshotManager.instance = new ScreenshotManager();
+
+    return ScreenshotManager.instance;
+  }
+
+  private incrementCount() {
+    this.count++;
+  }
+
+  async screenshot() {
+    const filePath = this.screenshotPath;
+    const screenshotFn = this.osMap.get(Deno.build.os);
+
+    if (!screenshotFn) throw new Error("Unsupported OS");
+
+    await screenshotFn(filePath);
+    this.incrementCount();
+
+    return filePath;
+  }
 }
 
-export function getScreenshot() {
-  return Deno.readFile(screenshotPath);
-}
+export const screenshotManager = ScreenshotManager.getInstance();

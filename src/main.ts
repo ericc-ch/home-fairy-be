@@ -4,15 +4,10 @@ import { Hono } from "@hono/hono";
 import { upgradeWebSocket } from "@hono/hono/deno";
 import { logger } from "@hono/hono/logger";
 import { WSContext } from "@hono/hono/ws";
-import {} from "@google/generative-ai";
 
 const app = new Hono();
 
 app.use(logger());
-
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
 
 const megabytes = (size: number) => size * 1024 * 1024;
 
