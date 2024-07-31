@@ -1,8 +1,8 @@
+import { resetFiles } from "@/lib/files.ts";
 import { commandRoutes } from "@/routes/commands/mod.ts";
 import { wsRoutes } from "@/routes/ws/mod.ts";
 import { Hono } from "@hono/hono";
 import { logger } from "@hono/hono/logger";
-import { resetFiles } from "@/lib/files.ts";
 
 const app = new Hono();
 
