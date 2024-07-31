@@ -1,10 +1,6 @@
 import { join } from "@std/path";
 import { emptyDirSync } from "@std/fs";
 
-function resetScreenshotDir() {
-  return emptyDirSync(ScreenshotManager.screenshotDir);
-}
-
 function screenshotWin(path: string) {
   // Script taken from https://github.com/npocmaka/batch.scripts/blob/master/hybrids/.net/c/screenCapture.bat
   const exePath = join(import.meta.dirname!, "screenshot.bat");
@@ -45,7 +41,8 @@ class ScreenshotManager {
   ]);
 
   private constructor() {
-    resetScreenshotDir();
+    console.log("Resetting screenshots...");
+    emptyDirSync(ScreenshotManager.screenshotDir);
   }
 
   static getInstance() {

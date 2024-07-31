@@ -50,6 +50,7 @@ const processCommand = async ({
 
   const ttsStatus = await waitForTTS({ taskId: ttsRequest.taskId });
   websocketManager.instance.send(JSON.stringify(ttsStatus));
+  console.log("Command processed!");
 };
 
 const megabytes = (size: number) => size * 1024 * 1024;
@@ -70,7 +71,7 @@ commandRoutes.post("/command", async (c) => {
     audio,
     sendScreenshot,
   }).catch((err) => {
-    console.error("Error processing STT request:", err);
+    console.error("Error processing command:", err);
     if (websocketManager.instance)
       websocketManager.instance.send(JSON.stringify(err));
   });

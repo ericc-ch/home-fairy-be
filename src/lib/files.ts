@@ -6,9 +6,8 @@ export const filesManager = new GoogleAIFileManager(GEMINI_API_KEY);
 export async function resetFiles() {
   const fileList = await filesManager.listFiles();
 
-  const deletePromises = fileList.files.map((file) =>
-    filesManager.deleteFile(file.name)
-  );
+  const deletePromises =
+    fileList.files?.map((file) => filesManager.deleteFile(file.name)) ?? [];
 
   return Promise.allSettled(deletePromises);
 }

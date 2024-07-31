@@ -2,9 +2,9 @@ import { websocketManager } from "@/lib/websocket.ts";
 import { Hono } from "@hono/hono";
 import { upgradeWebSocket } from "@hono/hono/deno";
 
-const app = new Hono();
+export const wsRoutes = new Hono();
 
-app.get(
+wsRoutes.get(
   "/ws",
   upgradeWebSocket(() => {
     return {
@@ -15,5 +15,3 @@ app.get(
     };
   })
 );
-
-Deno.serve(app.fetch);
