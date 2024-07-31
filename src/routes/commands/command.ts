@@ -13,22 +13,29 @@ interface ProcessCommandOptions {
   sendScreenshot?: boolean;
 }
 
+const TIME_LABEL = "processCommand";
+
 async function processCommand({
   audio,
   sendScreenshot = false,
 }: ProcessCommandOptions) {
+  console.log("Processing command...");
+  console.time(TIME_LABEL);
   if (!websocketManager.instance) return console.log("Websocket not connected");
 
   console.log("Uploading audio...");
   const uploadedAudio = await uploadAudioBlob(audio);
+  console.timeLog(TIME_LABEL, "Audio uploaded");
 
   let uploadedScreenshot: Awaited<ReturnType<typeof uploadImage>> | undefined;
   if (sendScreenshot) {
     console.log("Taking screenshot...");
     const screenshotPath = await screenshotManager.screenshot();
+    console.timeLog(TIME_LABEL, "Screenshot taken");
 
     console.log("Uploading screenshot...");
     uploadedScreenshot = await uploadImage(screenshotPath);
+    console.timeLog(TIME_LABEL, "Screenshot uploaded");
   }
 
   const parts: Array<Part> = [uploadedScreenshot, uploadedAudio]
@@ -44,6 +51,7 @@ async function processCommand({
     `Sending message: ${parts.map((part) => part.fileData?.fileUri).join(", ")}`
   );
   const result = await chatSession.sendMessage(parts);
+  console.timeLog(TIME_LABEL, "Message sent");
 
   console.log("Converting text to audio...");
   const ttsRequest = await generateTTS({
@@ -54,8 +62,11 @@ async function processCommand({
   });
 
   const ttsStatus = await waitForTTS({ taskId: ttsRequest.taskId });
+  console.timeLog(TIME_LABEL, "Text converted to audio");
+
   websocketManager.instance.send(JSON.stringify(ttsStatus));
   console.log("Command processed!");
+  console.timeEnd(TIME_LABEL);
 }
 
 const megabytes = (size: number) => size * 1024 * 1024;
