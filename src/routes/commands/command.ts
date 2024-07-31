@@ -13,10 +13,10 @@ interface ProcessCommandOptions {
   sendScreenshot?: boolean;
 }
 
-const processCommand = async ({
+async function processCommand({
   audio,
   sendScreenshot = false,
-}: ProcessCommandOptions) => {
+}: ProcessCommandOptions) {
   if (!websocketManager.instance) return console.log("Websocket not connected");
 
   console.log("Uploading audio...");
@@ -26,6 +26,8 @@ const processCommand = async ({
   if (sendScreenshot) {
     console.log("Taking screenshot...");
     const screenshotPath = await screenshotManager.screenshot();
+
+    console.log("Uploading screenshot...");
     uploadedScreenshot = await uploadImage(screenshotPath);
   }
 
@@ -38,6 +40,9 @@ const processCommand = async ({
       },
     }));
 
+  console.log(
+    `Sending message: ${parts.map((part) => part.fileData?.fileUri).join(", ")}`
+  );
   const result = await chatSession.sendMessage(parts);
 
   console.log("Converting text to audio...");
@@ -51,7 +56,7 @@ const processCommand = async ({
   const ttsStatus = await waitForTTS({ taskId: ttsRequest.taskId });
   websocketManager.instance.send(JSON.stringify(ttsStatus));
   console.log("Command processed!");
-};
+}
 
 const megabytes = (size: number) => size * 1024 * 1024;
 
