@@ -21,7 +21,8 @@ async function processCommand({
 }: ProcessCommandOptions) {
   console.log("Processing command...");
   console.time(TIME_LABEL);
-  if (!websocketManager.instance) return console.log("Websocket not connected");
+  // TODO: Differentiate errors using custom error classes
+  if (!websocketManager.instance) throw new Error("Websocket not connected");
 
   console.log("Uploading audio...");
   const uploadedAudio = await uploadAudioBlob(audio);
@@ -72,6 +73,9 @@ async function processCommand({
 const megabytes = (size: number) => size * 1024 * 1024;
 
 commandRoutes.post("/command", async (c) => {
+  if (!websocketManager.instance)
+    return c.json({ message: "Websocket not connected" }, 400);
+
   const body = await c.req.parseBody();
 
   const audio = body["audio"];
