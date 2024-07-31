@@ -7,6 +7,9 @@
     "dev": "deno run --watch --env --allow-env --allow-net --allow-read --allow-write --allow-run src/main.ts",
     "start": "deno run --env --allow-env --allow-net --allow-read --allow-write --allow-run src/main.ts"
   },
+  "lint": {
+    "include": ["src"]
+  },
   "imports": {
     "@/": "./src/",
     "@google/generative-ai": "npm:@google/generative-ai@^0.16.0",
