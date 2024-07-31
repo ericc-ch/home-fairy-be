@@ -16,4 +16,8 @@
 screenshots/
 screenshot.exe
 
+# Generated voicelines
+assets/voicelines
+assets/screenshots
+
 # End of https://www.toptal.com/developers/gitignore/api/deno

@@ -5,7 +5,8 @@
   },
   "tasks": {
     "dev": "deno run --watch --env --allow-env --allow-net --allow-read --allow-write --allow-run src/main.ts",
-    "start": "deno run --env --allow-env --allow-net --allow-read --allow-write --allow-run src/main.ts"
+    "start": "deno run --env --allow-env --allow-net --allow-read --allow-write --allow-run src/main.ts",
+    "generate_voicelines": "deno run --env --allow-env --allow-net --allow-read --allow-write src/scripts/generate_voicelines.ts"
   },
   "lint": {
     "include": ["src"]

@@ -1,5 +1,6 @@
 import { join } from "@std/path";
 import { emptyDirSync } from "@std/fs";
+import { screenshotDir } from "@/lib/directories.ts";
 
 function screenshotWin(path: string) {
   // Script taken from https://github.com/npocmaka/batch.scripts/blob/master/hybrids/.net/c/screenCapture.bat
@@ -22,7 +23,7 @@ function screenshotLinux(path: string) {
 
 class ScreenshotManager {
   private count = 0;
-  static screenshotDir = join(Deno.cwd(), "screenshots");
+  static screenshotDir = screenshotDir;
   private static instance = new ScreenshotManager();
 
   private get screenshotPath() {

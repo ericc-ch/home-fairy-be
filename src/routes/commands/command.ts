@@ -5,6 +5,7 @@ import { generateTTS, waitForTTS } from "@/services/tts/mod.ts";
 import { Part } from "@google/generative-ai";
 import { Hono } from "@hono/hono";
 import { websocketManager } from "@/lib/websocket.ts";
+import { getRandomVoicelinesUrl } from "@/lib/voicelines.ts";
 
 export const commandRoutes = new Hono();
 
@@ -96,5 +97,8 @@ commandRoutes.post("/command", async (c) => {
       websocketManager.instance.send(JSON.stringify(err));
   });
 
-  return c.json({ message: "Command received" }, 200);
+  return c.json(
+    { message: "Command received", voicelines: getRandomVoicelinesUrl() },
+    200
+  );
 });

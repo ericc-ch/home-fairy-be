@@ -43,7 +43,10 @@ export const getTTSStatus = ({ taskId }: GetTTSStatusOptions) => {
   });
 };
 
-export const waitForTTS = (options: GetTTSStatusOptions) => {
+export const waitForTTS = (
+  options: GetTTSStatusOptions,
+  delay: number = 100
+) => {
   return new Promise<GetTTSStatusResponse>((resolve, reject) => {
     const interval = setInterval(async () => {
       const response = await getTTSStatus(options);
@@ -54,23 +57,26 @@ export const waitForTTS = (options: GetTTSStatusOptions) => {
         clearInterval(interval);
         reject(response);
       }
-    }, 100);
+    }, delay);
   });
 };
 
-const TTS_FILES_EXTENSIONS = {
-  audio: "mp3",
-  subtitle: "vtt",
-} as const;
-
-type DownloadTTSOptions = {
+type DownloadTTSAudioOptions = {
   taskId: string;
-  type: keyof typeof TTS_FILES_EXTENSIONS;
 };
 
-export const downloadTTS = ({ taskId, type }: DownloadTTSOptions) => {
-  return tts(`/tts/${taskId}/download.${TTS_FILES_EXTENSIONS[type]}`, {
+export const downloadTTSAudio = ({ taskId }: DownloadTTSAudioOptions) => {
+  return tts(`/output/${taskId}.mp3`, {
     method: "GET",
-    responseType: type === "audio" ? "blob" : "text",
+    responseType: "blob",
+  });
+};
+
+type DownloadTTSSubtitleOptions = DownloadTTSAudioOptions;
+
+export const downloadTTSSubtitle = ({ taskId }: DownloadTTSSubtitleOptions) => {
+  return tts(`/output/${taskId}.vtt`, {
+    method: "GET",
+    responseType: "text",
   });
 };
