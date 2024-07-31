@@ -13,7 +13,6 @@
 *.swp
 
 # Screenshot util generated executables
-screenshots/
 screenshot.exe
 
 # Generated voicelines
