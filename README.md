@@ -10,5 +10,5 @@ So the requirements are:
 
 Credits:
 
-- Thanks to [npocmaka](https://github.com/npocmaka/batch.scripts) for the screen capture batch scripts
+- Thanks to [npocmaka](https://github.com/npocmaka/batch.scripts) for the screen capture batch script
 - Thanks to [Flameshot](https://flameshot.org) so I can easily screenshot from the terminal in Linux
