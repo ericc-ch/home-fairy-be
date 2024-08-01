@@ -1,11 +1,11 @@
 import { uploadAudioBlob, uploadImage } from "@/lib/files.ts";
 import { screenshotManager } from "@/lib/screenshot/mod.ts";
+import { getRandomVoicelinesUrl } from "@/lib/voicelines.ts";
+import { websocketManager } from "@/lib/websocket.ts";
 import { chatSession } from "@/services/ai/ai_services.ts";
 import { generateTTS, waitForTTS } from "@/services/tts/mod.ts";
 import { Part } from "@google/generative-ai";
 import { Hono } from "@hono/hono";
-import { websocketManager } from "@/lib/websocket.ts";
-import { getRandomVoicelinesUrl } from "@/lib/voicelines.ts";
 
 export const commandRoutes = new Hono();
 
@@ -23,7 +23,8 @@ async function processCommand({
   console.log("Processing command...");
   console.time(TIME_LABEL);
   // TODO: Differentiate errors using custom error classes
-  if (!websocketManager.instance) throw new Error("Websocket not connected");
+  if (!websocketManager.connections.length)
+    throw new Error("Websocket not connected");
 
   console.log("Uploading audio...");
   const uploadedAudio = await uploadAudioBlob(audio);
@@ -66,7 +67,7 @@ async function processCommand({
   const ttsStatus = await waitForTTS({ taskId: ttsRequest.taskId });
   console.timeLog(TIME_LABEL, "Text converted to audio");
 
-  websocketManager.instance.send(
+  websocketManager.sendToAll(
     JSON.stringify({
       ...ttsStatus,
       output: new URL(ttsStatus.url!).pathname,
@@ -79,7 +80,7 @@ async function processCommand({
 const megabytes = (size: number) => size * 1024 * 1024;
 
 commandRoutes.post("/command", async (c) => {
-  if (!websocketManager.instance)
+  if (!websocketManager.connections)
     return c.json({ message: "Websocket not connected" }, 400);
 
   const body = await c.req.parseBody();
@@ -98,13 +99,13 @@ commandRoutes.post("/command", async (c) => {
     takeScreenshot,
   }).catch((err) => {
     console.error("Error processing command:", err);
-    if (websocketManager.instance)
-      websocketManager.instance.send(JSON.stringify(err));
+    if (websocketManager.connections)
+      websocketManager.sendToAll(JSON.stringify(err));
   });
 
   const voiceline = getRandomVoicelinesUrl();
 
-  websocketManager.instance.send(
+  websocketManager.sendToAll(
     JSON.stringify({
       message: "Command received",
       voiceline,

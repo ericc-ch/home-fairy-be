@@ -1,9 +1,15 @@
 import { WSContext } from "@hono/hono/ws";
 
 interface WebsocketManager {
-  instance: WSContext | undefined;
+  connections: Array<WSContext>;
+  sendToAll(payload: string): void;
 }
 
 export const websocketManager: WebsocketManager = {
-  instance: undefined,
+  connections: [],
+  sendToAll: (payload: string) => {
+    websocketManager.connections.forEach((connection) => {
+      connection.send(payload);
+    });
+  },
 };

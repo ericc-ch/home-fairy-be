@@ -10,7 +10,14 @@ wsRoutes.get(
     return {
       onOpen: (_, ws) => {
         console.log("Websocket connection opened!");
-        websocketManager.instance = ws;
+        websocketManager.connections.push(ws);
+      },
+      onClose: () => {
+        console.log("Websocket connection closed!");
+        // Cleanup every closed connection whenever a connection is closed
+        websocketManager.connections = websocketManager.connections.filter(
+          (connection) => connection.readyState !== 3
+        );
       },
     };
   })
