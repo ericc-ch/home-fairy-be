@@ -11,6 +11,11 @@ wsRoutes.get(
       onOpen: (_, ws) => {
         console.log("Websocket connection opened!");
         websocketManager.connections.push(ws);
+
+        console.log(
+          "Connections count: ",
+          websocketManager.connections.length
+        );
       },
       onClose: () => {
         console.log("Websocket connection closed!");
@@ -20,7 +25,7 @@ wsRoutes.get(
         );
 
         console.log(
-          "Remaining connections: ",
+          "Connections count: ",
           websocketManager.connections.length
         );
       },
