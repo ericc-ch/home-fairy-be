@@ -18,6 +18,11 @@ wsRoutes.get(
         websocketManager.connections = websocketManager.connections.filter(
           (connection) => connection.readyState !== 3
         );
+
+        console.log(
+          "Remaining connections: ",
+          websocketManager.connections.length
+        );
       },
     };
   })
